@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  mongo:
+    image: mongo:7
+    ports: ["27017:27017"]
+    volumes: ["mongo-data:/data/db"]
+
+  node-api:
+    build: ../backend/node-api
+    ports: ["5000:5000"]
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/interviewai
+      - AI_SERVICE_URL=http://python-ai:8000
+    depends_on: [mongo, python-ai]
+
+  python-ai:
+    build: ../backend/python-ai
+    ports: ["8000:8000"]
+    env_file: ../backend/python-ai/.env
+
+volumes:
+  mongo-data:
